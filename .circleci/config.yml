@@ -20,6 +20,16 @@ jobs:
       - node/install:
           install-yarn: true
       - run: node --version
+  deploy:
+    executor: heroku/default
+    steps:
+      - checkout
+      - heroku/install
+      - run:
+          command: >
+            echo "The command above installs Heroku, the command below deploys.
+            What you do inbetween is up to you!"
+      - heroku/deploy-via-git
 
 workflows:
   # Below is the definition of your workflow.
@@ -29,10 +39,4 @@ workflows:
   sample:
     jobs:
       - install-node-example
-      - heroku/deploy-via-git:
-          force: true # this parameter instructs the push to use a force flag when pushing to the heroku remote, see: https://devcenter.heroku.com/articles/git
-          filters:
-            branches:
-              # This sample config runs this job on any branch matching the regex below, however, it's more likely you want to only run this job on master.
-              only: /.*-heroku-deploy/ # Delete this line
-              # only: master  # Uncomment this line
+      - deploy
